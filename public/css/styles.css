@@ -1,0 +1,42 @@
+body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  background-color: #87d0e8;
+  margin: 20px;
+}
+
+h1 {
+  color: #2c3e50;
+}
+
+p {
+  color: #34495e;
+}
+
+nav {
+  background-color: #333; /* dark navbar */
+  padding: 10px 20px;
+}
+
+nav ul.navbar {
+  display: flex;
+  justify-content: space-between; /* left vs right */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+nav ul.navbar li {
+  display: inline;
+  margin: 0 10px;
+}
+
+nav ul.navbar li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav ul.navbar li a:hover {
+  text-decoration: underline;
+}
