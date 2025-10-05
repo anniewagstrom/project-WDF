@@ -1,10 +1,44 @@
-<h2>Projects</h2>
-<ul>
-  {{#each projects}}
-    <li>
-      <strong>{{name}}</strong><br>
-      <img src="{{img}}" alt="{{name}}" width="150">
-    </li>
-  {{/each}}
-</ul>
+<h1>Projects</h1>
 
+<div class="projects-container">
+  {{#each projects}}
+    <div class="project-card">
+      <img src="{{img}}" alt="{{title}}" class="product-img" id="product-{{@index}}">
+      <p>{{title}}</p>
+    </div>
+  {{/each}}
+</div>
+
+<script>
+  // --- Animate only first two images ---
+  const firstImg = document.getElementById("product-0");
+  const secondImg = document.getElementById("product-1");
+
+  if(firstImg){
+    let posX = 0, dirX = 1;
+    const speedX = 1;
+
+    function moveHoriz(){
+      posX += speedX * dirX;
+      if(posX < 0 || posX > window.innerWidth - firstImg.width) dirX *= -1;
+      firstImg.style.position = "absolute";
+      firstImg.style.left = posX + "px";
+      requestAnimationFrame(moveHoriz);
+    }
+    moveHoriz();
+  }
+
+  if(secondImg){
+    let posY = 0, dirY = 1;
+    const speedY = 1;
+
+    function moveVert(){
+      posY += speedY * dirY;
+      if(posY < 0 || posY > window.innerHeight - secondImg.height) dirY *= -1;
+      secondImg.style.position = "absolute";
+      secondImg.style.top = posY + "px";
+      requestAnimationFrame(moveVert);
+    }
+    moveVert();
+  }
+</script>

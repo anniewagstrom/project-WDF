@@ -1,0 +1,4 @@
+node_modules/
+package-lock.json
+mydatabase.db
+.DS_Store

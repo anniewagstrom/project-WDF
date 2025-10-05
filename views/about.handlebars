@@ -1,49 +1,63 @@
-<h1>About WaveStream Sports</h1>
+<h1 id="rubric-title" style="cursor:pointer; color:#2c3e50; text-align:center;">About WaveStream Sports</h1>
 
-<div id="founder-container" style="position: relative; height: 400px; margin-top: 20px;">
-  <!-- Founder Picture -->
-  <img src="/img/codeselfie.png" id="founder-img" alt="Founder" style="position:absolute; left:0; top:0; width:150px; border-radius: 10px;">
+<div id="founder-container"> 
+  <!-- Founder Image with Glow -->
+  <img src="/img/codeselfie.png" id="founder-img" alt="Founder"
+       style="width:150px; border-radius:10px; display:block; margin: 40px auto 20px;
+              box-shadow: 0 0 20px rgba(0, 150, 255, 0.6);">
 
   <!-- Founder Name -->
-  <h2 style="margin-top: 180px;">Annie Wågström</h2>
+  <h2>Annie Wågström</h2>
 
   <!-- Short Paragraph -->
-  <p>I am the founder of WaveStream Sports. I love fitness, web development, and creating interactive experiences for users!</p>
+  <div id="about-box">
+    <p>is the founder behind WaveStream Sports, 
+    driven by a deep passion for health and fitness. 
+    The concept of wearing stylish, functional sportswear boosts 
+    confidence and motivates people to stay active and pursue their goals. 
+    The mission is to create products and experiences that inspire and empower
+    everyone to feel their best every day.
+    </p>
+  </div>
 
   <!-- Button to change background color -->
-  <button id="colorBtn" style="padding: 10px 20px; margin-top: 10px; cursor: pointer;">Change Background Color</button>
-
-  <!-- Link back to homepage -->
-  <br><br>
-  <a href="/" style="color: #2c3e50; font-weight: bold;">Back to Home</a>
+  <button id="colorBtn">Change Background Color</button>
 </div>
 
 <script>
-  // --- Bouncing animation ---
+  // --- Pulsating animation ---
   const img = document.getElementById("founder-img");
-  let posX = 0, posY = 0;
-  let dirX = 1, dirY = 1;
-  const speed = 2;
+  let scaleAngle = 0;
+  const scaleRange = 0.08;
+  const scaleSpeed = 0.02;
 
-  function bounceImg() {
-    posX += speed * dirX;
-    posY += speed * dirY;
-
-    // Bounce at window edges
-    if(posX <= 0 || posX >= window.innerWidth - img.width) dirX *= -1;
-    if(posY <= 0 || posY >= window.innerHeight - img.height) dirY *= -1;
-
-    img.style.left = posX + "px";
-    img.style.top = posY + "px";
-
-    requestAnimationFrame(bounceImg);
+  function pulsate() {
+    scaleAngle += scaleSpeed;
+    const scale = 1 + Math.sin(scaleAngle) * scaleRange;
+    img.style.transform = `scale(${scale})`;
+    requestAnimationFrame(pulsate);
   }
+  pulsate();
 
-  bounceImg();
-
-  // --- Background color change ---
+  // --- Background color change (nude/pastel palette) ---
   const btn = document.getElementById("colorBtn");
+  const pastelColors = [
+    "#f7ede2", // beige
+    "#f5e1da", // light pink
+    "#dbe7f1", // baby blue
+    "#e8d6c8", // soft brown
+    "#fde2e4", // pinkish
+    "#e0f7fa"  // light cyan
+  ];
+
   btn.addEventListener("click", () => {
-    document.body.style.backgroundColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+    const randomColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+    document.body.style.backgroundColor = randomColor;
+  });
+
+  // --- Rubric click goes back home ---
+  const rubric = document.getElementById("rubric-title");
+  rubric.addEventListener("click", () => {
+    window.location.href = "/";
   });
 </script>

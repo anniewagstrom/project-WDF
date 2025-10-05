@@ -3,147 +3,162 @@ const { engine } = require("express-handlebars");
 const sqlite3 = require("sqlite3").verbose();
 
 const app = express();
-const port = 8080;
+const port = 4321;
 const db = new sqlite3.Database("mydatabase.db");
 
-// Setup Handlebars
+// Handlebars setup
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", __dirname + "/views");
 
-// Serve static files (CSS, images)
-app.use(express.static("public"));
+// Serve static files
+app.use(express.static("assets"));
 app.use(express.urlencoded({ extended: true }));
 
-db.serialize(() => {
-  // ------------------------
-  // Persons table
-  // ------------------------
-  db.run(`CREATE TABLE IF NOT EXISTS persons (
+// DATABASE INIT
+
+function initTableSkills() {
+  db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS skills (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT UNIQUE,   -- prevent duplicates
+      level INTEGER,
+      years INTEGER,
+      description TEXT
+    )`);
+
+    const skillsData = [
+      { name: "HTML", level: 4, years: 2, description: "Markup Language" },
+      { name: "CSS", level: 3, years: 2, description: "Styling web pages" },
+      { name: "JavaScript", level: 4, years: 2, description: "Programming language for web" }
+    ];
+
+    const stmt = db.prepare(
+      `INSERT OR IGNORE INTO skills (name, level, years, description) VALUES (?, ?, ?, ?)`
+    );
+
+    skillsData.forEach(skill => {
+      stmt.run(skill.name, skill.level, skill.years, skill.description);
+    });
+
+    stmt.finalize();
+  });
+}
+
+// Projects Table
+function initTableProjects() {
+  db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT UNIQUE,    -- prevent duplicates
+      description TEXT,
+      technologies TEXT,
+      link TEXT,
+      img TEXT
+    )`);
+
+    const projectsData = [
+      { 
+        title: "Gym Image One", 
+        description: "First Product Image", 
+        technologies: "HTML,CSS,JS", 
+        link: "https://example.com", 
+        img: "img/gym1.jpg" 
+      },
+      { 
+        title: "Gym Image Two", 
+        description: "Second Product Image", 
+        technologies: "HTML,CSS,JS", 
+        link: "https://example.com/gym", 
+        img: "img/gym2.jpg" 
+      },
+      { 
+        title: "Gym Image Three", 
+        description: "Third Product Image", 
+        technologies: "HTML,CSS,JS", 
+        link: "https://example.com/gym", 
+        img: "img/gym3.jpg" 
+      },
+      { 
+        title: "Gym Image Four", 
+        description: "Fourth Product Image", 
+        technologies: "HTML,CSS,JS", 
+        link: "https://example.com/gym", 
+        img: "img/gym4.jpg" 
+      },
+      { 
+        title: "Gym Image Five", 
+        description: "Fifth Product Image.", 
+        technologies: "HTML,CSS,JS", 
+        link: "https://example.com/gym", 
+        img: "img/gym5.jpg" 
+      },
+      
+    ];
+
+    const stmt = db.prepare(
+      `INSERT OR IGNORE INTO projects (title, description, technologies, link, img) VALUES (?, ?, ?, ?, ?)`
+    );
+
+    projectsData.forEach(project => {
+      stmt.run(project.title, project.description, project.technologies, project.link, project.img);
+    });
+
+    stmt.finalize();
+  });
+}
+
+//Users Table
+function initTableUsers() {
+  db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT
+    username TEXT UNIQUE,
+    password TEXT
   )`);
 
-  // Insert sample data without duplicates
-  db.run(`INSERT OR IGNORE INTO persons (id, name, email) VALUES (1, "Alice", "alice@example.com")`);
-  db.run(`INSERT OR IGNORE INTO persons (id, name, email) VALUES (2, "Bob", "bob@example.com")`);
+  db.run(`INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`, ["admin", "password123"]);
+}
 
-  // ------------------------
-  // Skills table
-  // ------------------------
-  db.run(`CREATE TABLE IF NOT EXISTS skills (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    level INTEGER,
-    years INTEGER,
-    description TEXT
-  )`);
+// ROUTES
 
-  // Insert sample skills
-  db.run(`INSERT OR IGNORE INTO skills (id, name, level, years, description) VALUES (1, "HTML", 4, 2, "Markup language")`);
-  db.run(`INSERT OR IGNORE INTO skills (id, name, level, years, description) VALUES (2, "CSS", 3, 2, "Styling web pages")`);
-  db.run(`INSERT OR IGNORE INTO skills (id, name, level, years, description) VALUES (3, "JavaScript", 4, 2, "Programming language for web")`);
-
-  // ------------------------
-  // Projects table
-  // ------------------------
-  db.run(`CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
-    description TEXT,
-    technologies TEXT,
-    link TEXT
-  )`);
-
-  // Insert sample projects
-  db.run(`INSERT OR IGNORE INTO projects (id, title, description, technologies, link) VALUES (1, "Portfolio", "My portfolio site", "HTML,CSS,JS", "https://example.com")`);
-  db.run(`INSERT OR IGNORE INTO projects (id, title, description, technologies, link) VALUES (2, "Gym Clothes Webshop", "A webshop for fitness clothing", "HTML,CSS,JS", "https://example.com/gym")`);
-});
-
-// Root page
+// Home page - skills
 app.get("/", (req, res) => {
   db.all("SELECT * FROM skills", (err, rows) => {
     if (err) return res.status(500).send(err.message);
     res.render("home", { skills: rows });
-   });
-});
-
-app.get("/about", (req, res) => {
-  db.all("SELECT * FROM persons", (err, rows) => {
-    if (err) {
-      console.log("DB Error:", err.message); // debug log
-      res.status(500).send(err.message);
-    } else {
-      console.log("About rows:", rows); // debug log
-      res.render("about", { persons: rows });
-    }
   });
 });
 
-// Contact page
-app.get("/contact", (req, res) => {
-  res.render("contact", {
-    email: "fakeemail@example.com",
-    phone: "07 07 07 07 07"
-  });
-});
-
-// Projects page (Gym Clothes Webshop)
-const projects = [
-  { name: "GymShark", img: "img/gym1.jpg" },
-  { name: "Fitness Team", img: "img/gym2.jpg" },
-  { name: "Img 3", img: "img/gym3.jpg" },
-  { name: "Img 4", img: "img/gym4.jpg" },
-  { name: "Img 5", img: "img/gym5.jpg" },
-];
-
+// Projects page
 app.get("/projects", (req, res) => {
   db.all("SELECT * FROM projects", (err, rows) => {
     if (err) return res.status(500).send(err.message);
-    res.render("projects", { projects });
+    res.render("projects", { projects: rows }); // img comes directly from DB
   });
 });
 
-// Login form (GET)
-app.get("/login", (req, res) => {
-  res.render("login");
-});
+// About, Contact, Login pages
+app.get("/about", (req, res) => res.render("about"));
+app.get("/contact", (req, res) => res.render("contact"));
+app.get("/login", (req, res) => res.render("login"));
 
-// Login form submission (POST)
+// Login form submission
 app.post("/login", (req, res) => {
-  const { login, password } = req.body;
-  db.get("SELECT * FROM users WHERE username=? AND password=?", [login, password], (err, row) => {
-    if (err) return res.status(500).send(err.message);
-    if (row) res.send(`Welcome, ${login}!`);
-    else res.send("Invalid login");
+  const { username, password } = req.body;
+  db.get(`SELECT * FROM users WHERE username = ? AND password = ?`, [username, password], (err, row) => {
+    if (err) return res.status(500).send("Database error");
+    if (row) res.send(`<h2>Welcome, ${row.username}!</h2>`);
+    else res.send("<h2>Invalid login. Try again.</h2>");
   });
 });
 
+// ---------------------
+// START SERVER
+// ---------------------
 
-// Raw JSON route
-app.get("/rawpersons", (req, res) => {
-  db.all("SELECT * FROM persons", (err, rows) => {
-    if (err) return res.status(500).send(err.message);
-    res.send(rows);
-  });
-});
-
-
-// HTML list route
-app.get("/listpersons", (req, res) => {
-  db.all("SELECT * FROM persons", (err, rows) => {
-    if (err) return res.status(500).send(err.message);
-
-    let html = "<h1>Persons List</h1><ul>";
-    rows.forEach(row => html += `<li>${row.name} - ${row.email}</li>`);
-    html += "</ul>";
-    res.send(html);
-  });
-});
-
-
-// Start server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+  initTableSkills();
+  initTableProjects();
+  initTableUsers();
 });

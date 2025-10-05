@@ -1,0 +1,146 @@
+/* General Body & Typography */
+body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  background-color: #87d0e8;
+  margin: 20px;
+  transition: background-color 1.5s ease;
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+}
+
+p {
+  color: #34495e;
+}
+
+/* Header & Navbar */
+header {
+  background-color: #4e80cb;
+  padding: 1em;
+  border-radius: 5px;
+}
+
+nav {
+  background-color: #669fd4;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+.navbar {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar li {
+  display: inline;
+  margin: 0 10px;
+}
+
+.navbar li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.navbar li a:hover {
+  text-decoration: underline;
+}
+
+/* Projects Container */
+.projects-container {
+  display: flex;
+  flex-wrap: wrap;             /* Allow multiple rows */
+  justify-content: center;     /* Center the cards horizontally */
+  gap: 20px;                   /* Space between cards */
+  margin-top: 30px;
+}
+
+.animated-container {
+  position: relative;
+  height: 300px;
+}
+
+.static-container {
+  margin-top: 350px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Each Project Card */
+.project-card {
+  display: flex;
+  flex-direction: column;      /* Image on top, text below */
+  align-items: center;
+  width: 180px;                /* Fixed card width to control size */
+  text-align: center;
+  position: relative;          /* For JS animations */
+}
+
+/* Product Image */
+.project-card .product-img {
+  width: 100%;                 /* Image fills card width */
+  height: auto;                /* Keep aspect ratio */
+  border-radius: 8px;
+  transition: transform 0.5s ease;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.project-card .product-img:hover {
+  transform: scale(1.2) rotate(2deg); /* Slight zoom & rotation */
+}
+
+.static-img {
+  width: 150px;
+  height: auto;
+}
+
+#about-box {
+  max-width: 600px;   
+  margin: 50px auto;    
+  padding: 20px;
+  background-color: rgba(255,255,255,0.85);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#founder-container {
+  text-align: center;
+}
+
+#founder-container h2 {
+  text-align: center;
+  margin-top: 50px;
+}
+
+#about-box p {
+  max-width: 90%;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+#colorBtn {
+  margin-top: 40px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+#colorBtn:hover {
+  transform: scale(1.2);
+}
+
+footer {
+  margin-top: 350px;
+  text-align: right;
+}
